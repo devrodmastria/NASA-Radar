@@ -46,6 +46,10 @@ class MainFragment : Fragment() {
         val imageURL = "https://apod.nasa.gov/apod/image/2210/NGC1300_HST_1080.jpg"
         Glide.with(imageView.context).load(imageURL).into(imageView)
 
+        binding.asteroidRecycler.adapter = AsteroidListAdapter(AsteroidListAdapter.OnClickListener {
+            viewModel.displayAsteroidInfo(it)
+        })
+
         return binding.root
     }
 
