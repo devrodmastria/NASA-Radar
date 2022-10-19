@@ -49,8 +49,8 @@ class MainFragment : Fragment() {
 
         viewModel.imageOfToday.observe(viewLifecycleOwner, Observer {
             newImage ->
-            Log.i("-->> Nasa API", "new image " + newImage.title)
-            Log.i("-->> Nasa API", "new image " + newImage.url)
+//            Log.i("-->> Nasa API", "new image " + newImage.title)
+//            Log.i("-->> Nasa API", "new image " + newImage.url)
 
             binding.textView.text = newImage.title
             Glide.with(imageView.context).load(newImage.url).into(imageView)

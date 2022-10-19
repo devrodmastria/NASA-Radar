@@ -9,6 +9,7 @@ import com.udacity.asteroidradar.OfflineConstant
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 private val moshi = Moshi.Builder()
@@ -26,8 +27,11 @@ interface NasaApiService {
     @GET(Constants.IMAGE_OF_TODAY + OfflineConstant.API_KEY)
     suspend fun getImageOfToday(): ImageOfToday
 
-    @GET("url")
-    suspend fun getAsteroids(): List<Asteroid>
+    // ******* com.squareup.moshi.JsonDataException: Expected BEGIN_ARRAY but was BEGIN_OBJECT at path $
+    @GET(Constants.ASTEROID_LIST_FEED)
+    suspend fun getAsteroids(@Query(Constants.ASTEROID_LIST_FROM) fromDate: String,
+                             @Query(Constants.ASTEROID_LIST_TO) toDate: String,
+                             @Query(Constants.ASTEROID_LIST_KEY) key: String): List<Asteroid>
 }
 
 object NasaApi {

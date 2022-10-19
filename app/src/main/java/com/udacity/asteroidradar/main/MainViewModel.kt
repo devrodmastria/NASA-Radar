@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.udacity.asteroidradar.Asteroid
 import com.udacity.asteroidradar.ImageOfToday
+import com.udacity.asteroidradar.OfflineConstant
 import com.udacity.asteroidradar.api.NasaApi
 import kotlinx.coroutines.launch
 
@@ -36,7 +37,7 @@ class MainViewModel : ViewModel() {
             try {
                 _imageToday.value = NasaApi.retrofitService.getImageOfToday()
             } catch (e: java.lang.Exception) {
-                Log.i("-->> Nasa API", "error for today's image" + e.localizedMessage)
+//                Log.i("-->> Nasa API", "error for today's image" + e.localizedMessage)
             }
         }
     }
@@ -45,11 +46,12 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch {
             _status.value = NasaApiStatus.LOADING
             try {
-                _asteroidItems.value = NasaApi.retrofitService.getAsteroids()
+                _asteroidItems.value = NasaApi.retrofitService.getAsteroids("2022-10-01", "2022-10-02", OfflineConstant.API_KEY)
                 _status.value = NasaApiStatus.DONE
             } catch (e: java.lang.Exception) {
                 _status.value = NasaApiStatus.ERROR
                 _asteroidItems.value = ArrayList()
+                Log.i("-->> Nasa API", "error for asteroid list " + e.suppressed.toString())
             }
         }
     }
