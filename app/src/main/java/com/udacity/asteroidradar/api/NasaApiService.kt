@@ -28,6 +28,7 @@ interface NasaApiService {
     suspend fun getImageOfToday(): ImageOfToday
 
     // ******* com.squareup.moshi.JsonDataException: Expected BEGIN_ARRAY but was BEGIN_OBJECT at path $
+    // https://github.com/square/moshi
     @GET(Constants.ASTEROID_LIST_FEED)
     suspend fun getAsteroids(@Query(Constants.ASTEROID_LIST_FROM) fromDate: String,
                              @Query(Constants.ASTEROID_LIST_TO) toDate: String,
