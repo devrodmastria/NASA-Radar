@@ -17,13 +17,13 @@ private val moshi = Moshi.Builder()
 
 private val retrofit = Retrofit.Builder()
     .addConverterFactory(MoshiConverterFactory.create(moshi))
-    .baseUrl(Constants.BASE_URL + Constants.IMAGE_OF_TODAY + OfflineConstant.Auth.API_KEY)
+    .baseUrl(Constants.BASE_URL)
     .build()
 
-// Coroutine list of Asteroid items
+// Coroutine list of Asteroid items + Image of the Day
 interface NasaApiService {
 
-    @GET("url")
+    @GET(Constants.IMAGE_OF_TODAY + OfflineConstant.API_KEY)
     suspend fun getImageOfToday(): ImageOfToday
 
     @GET("url")

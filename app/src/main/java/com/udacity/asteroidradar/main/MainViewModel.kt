@@ -1,6 +1,5 @@
 package com.udacity.asteroidradar.main
 
-import android.support.v4.os.IResultReceiver._Parcel
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -15,15 +14,16 @@ enum class NasaApiStatus { LOADING, ERROR, DONE }
 
 class MainViewModel : ViewModel() {
 
-    private val _navigateToSelectedAsteroid = MutableLiveData<Asteroid>()
-
     private val _status = MutableLiveData<NasaApiStatus>()
 
     private val _asteroidItems = MutableLiveData<List<Asteroid>>()
 
     private val _imageToday = MutableLiveData<ImageOfToday>()
+    val imageOfToday: LiveData<ImageOfToday>
+        get() = _imageToday
 
-    val navigateToSelectedItem: LiveData<Asteroid>
+    private val _navigateToSelectedAsteroid = MutableLiveData<Asteroid>()
+    val navigateToSelectedAsteroid: LiveData<Asteroid>
         get() = _navigateToSelectedAsteroid
 
     init {
@@ -33,14 +33,11 @@ class MainViewModel : ViewModel() {
 
     private fun getAsteroidOfToday(){
         viewModelScope.launch {
-
             try {
                 _imageToday.value = NasaApi.retrofitService.getImageOfToday()
-
             } catch (e: java.lang.Exception) {
-                Log.i("-->> Nasa API", "Response error for today's image")
+                Log.i("-->> Nasa API", "error for today's image" + e.localizedMessage)
             }
-
         }
     }
 

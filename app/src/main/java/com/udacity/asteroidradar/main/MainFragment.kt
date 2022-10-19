@@ -1,16 +1,20 @@
 package com.udacity.asteroidradar.main
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.ImageView
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.udacity.asteroidradar.R
+import com.udacity.asteroidradar.databinding.FragmentDetailBinding
 import com.udacity.asteroidradar.databinding.FragmentMainBinding
 
 class MainFragment : Fragment() {
@@ -21,9 +25,9 @@ class MainFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
+
         val binding = FragmentMainBinding.inflate(inflater)
         binding.lifecycleOwner = this
-
         binding.viewModel = viewModel
 
         val menuHost: MenuHost = requireActivity()
@@ -43,8 +47,14 @@ class MainFragment : Fragment() {
         val imageView: ImageView = binding.activityMainImageOfTheDay
         imageView.contentDescription = "Image name"
 
-        val imageURL = "https://apod.nasa.gov/apod/image/2210/NGC1300_HST_1080.jpg"
-        Glide.with(imageView.context).load(imageURL).into(imageView)
+        viewModel.imageOfToday.observe(viewLifecycleOwner, Observer {
+            newImage ->
+            Log.i("-->> Nasa API", "new image " + newImage.title)
+            Log.i("-->> Nasa API", "new image " + newImage.url)
+
+            binding.textView.text = newImage.title
+            Glide.with(imageView.context).load(newImage.url).into(imageView)
+        })
 
         binding.asteroidRecycler.adapter = AsteroidListAdapter(AsteroidListAdapter.OnClickListener {
             viewModel.displayAsteroidInfo(it)
