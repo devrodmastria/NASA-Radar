@@ -1,8 +1,32 @@
 package com.udacity.asteroidradar
 
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
+import androidx.recyclerview.widget.RecyclerView
+import com.udacity.asteroidradar.main.AsteroidListAdapter
+import com.udacity.asteroidradar.main.NasaApiStatus
+
+@BindingAdapter("asteroidApiStatus")
+fun bindStatus(statusImageView: ImageView, status: NasaApiStatus?) {
+    when (status) {
+        NasaApiStatus.LOADING -> {
+            statusImageView.visibility = View.VISIBLE
+            statusImageView.setImageResource(R.drawable.loading_animation)
+        }
+        NasaApiStatus.ERROR -> {
+            statusImageView.visibility = View.VISIBLE
+            statusImageView.setImageResource(R.drawable.ic_connection_error)
+        }
+        NasaApiStatus.DONE -> {
+            statusImageView.visibility = View.GONE
+        }
+        else -> {
+
+        }
+    }
+}
 
 @BindingAdapter("statusIcon")
 fun bindAsteroidStatusImage(imageView: ImageView, isHazardous: Boolean) {
@@ -11,6 +35,12 @@ fun bindAsteroidStatusImage(imageView: ImageView, isHazardous: Boolean) {
     } else {
         imageView.setImageResource(R.drawable.ic_status_normal)
     }
+}
+
+@BindingAdapter("asteroidListData")
+fun bindRecyclerView(recyclerView: RecyclerView, data: ArrayList<Asteroid>?) {
+    val adapter = recyclerView.adapter as AsteroidListAdapter
+    adapter.submitList(data)
 }
 
 @BindingAdapter("asteroidStatusImage")

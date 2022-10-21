@@ -1,5 +1,6 @@
 package com.udacity.asteroidradar.main
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -11,9 +12,13 @@ import com.udacity.asteroidradar.databinding.ListViewItemBinding
 class AsteroidListAdapter ( val onClickListener: OnClickListener ) :
     ListAdapter<Asteroid, AsteroidListAdapter.AsteroidViewHolder>(DiffCallback) {
 
-class AsteroidViewHolder(private var binding: ListViewItemBinding): RecyclerView.ViewHolder(binding.root) {
+    class AsteroidViewHolder(private var binding: ListViewItemBinding):
+        RecyclerView.ViewHolder(binding.root) {
 
         fun bind(asteroid: Asteroid) {
+
+//            Log.i("-->> Nasa API", "AsteroidViewHolder " + asteroid.codename)
+
             binding.asteroidName.text = asteroid.codename
             binding.executePendingBindings()
         }

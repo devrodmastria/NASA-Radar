@@ -16,13 +16,14 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.jsonObject
 
 enum class NasaApiStatus { LOADING, ERROR, DONE }
 
 class MainViewModel : ViewModel() {
 
     private val _status = MutableLiveData<NasaApiStatus>()
+    val apiStatus : LiveData<NasaApiStatus>
+        get() = _status
 
     private val _imageToday = MutableLiveData<ImageOfToday>()
     val imageOfToday: LiveData<ImageOfToday>
@@ -33,6 +34,26 @@ class MainViewModel : ViewModel() {
         get() = _navigateToSelectedAsteroid
 
     private val _asteroidItemsLiveData = MutableLiveData<ArrayList<Asteroid>>()
+    val asteroidLiveData : LiveData<ArrayList<Asteroid>>
+        get() = _asteroidItemsLiveData
+
+    val sampleData : LiveData<ArrayList<Asteroid>>
+        get() {
+            val asteroidList = ArrayList<Asteroid>()
+            val asteroid = Asteroid(
+                1L,
+                "codename",
+                "formattedDate",
+                1.0,
+                10.0,
+                10.0,
+                1000.0,
+                false)
+            asteroidList.add(asteroid)
+            _asteroidItemsLiveData.value = asteroidList
+
+            return _asteroidItemsLiveData
+        }
 
     init {
         getAsteroidOfToday()
@@ -53,21 +74,28 @@ class MainViewModel : ViewModel() {
 
         val firstDate = getNextSevenDaysFormattedDates().get(0)
         val lastDate = getNextSevenDaysFormattedDates().get(Constants.DEFAULT_END_DATE_DAYS)
-        Log.i("-->> Nasa API", "First Date $firstDate")
-        Log.i("-->> Nasa API", "Last Date $lastDate")
+//        Log.i("-->> Nasa API", "First Date $firstDate")
+//        Log.i("-->> Nasa API", "Last Date $lastDate")
 
         viewModelScope.launch {
             _status.value = NasaApiStatus.LOADING
+
             try {
 
                 val jsonString = NasaApi.retrofitServiceForNeos.getAsteroids(firstDate, lastDate, OfflineConstant.API_KEY)
                 val nasaResponseObject = Json.decodeFromString<JsonObject>(jsonString)
-                val testItem = nasaResponseObject.jsonObject.get("near_earth_objects") // THIS WORKS!
-//                Log.i("-->> Nasa API", "getAsteroidsFromNasa " + testItem)
+
+//                val testItem = nasaResponseObject.jsonObject.get("near_earth_objects") // THIS WORKS!
+//                Log.i("-->> Nasa API", "getAsteroidsFromNasa " + testItem) // THIS WORKS!
 
                 val asteroidList : ArrayList<Asteroid> = parseAsteroidsJsonResult(nasaResponseObject)
 
+                Log.i("-->> Nasa API", "asteroidList " + asteroidList.size)
+
+                _asteroidItemsLiveData.value = asteroidList
+
                 _status.value = NasaApiStatus.DONE
+
             } catch (e: java.lang.Exception) {
                 _status.value = NasaApiStatus.ERROR
 
