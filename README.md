@@ -13,9 +13,8 @@ This project consists of two screens:
 
 ## Getting started
 This project requires a private API key from the NASA website.
-* Create a Kotlin file called 'OfflineConstant' in the same level as the Constants file.
-* Create a constant value to store your key 
-  * object OfflineConstant { const val API_KEY = "YOUR_KEY" }
+* Find OfflineConstant file in main app folder
+* Add API key to placeholder constant
 
 ## Honor Code
 This project was developed based on the starter code provided by Udacity.
