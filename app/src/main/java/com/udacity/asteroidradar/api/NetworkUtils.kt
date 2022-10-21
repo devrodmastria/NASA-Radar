@@ -32,17 +32,22 @@ fun parseAsteroidsJsonResult(jsonResult: JsonObject): ArrayList<Asteroid> {
 
             for (asteroidItem in 0 until asteroidCount!!){
                 val asteroidJson = asteroidsForThisDate?.get(asteroidItem)
-//                Log.i("-->> Nasa API", "jsonNEO $formattedDate with item $asteroidItem known as ${asteroidJson?.jsonObject?.get("name")}")
 
-                val id = asteroidJson?.jsonObject?.get("id").toString()
+                val rawID =  asteroidJson?.jsonObject?.get("id").toString()
+                val cleanID = rawID.replace("\"", "").toLong()
+
+                Log.i("-->> Nasa API", "jsonNEO ID $cleanID ")
+
                 val codename = asteroidJson?.jsonObject?.get("name").toString()
+//                Log.i("-->> Nasa API", "jsonNEO $formattedDate with item $asteroidItem known as $codename")
+
                 val closeApproachData = asteroidJson?.jsonObject?.get("close_approach_data")?.jsonArray?.get(0)?.jsonObject
 
                 val relativeVelocity = closeApproachData?.jsonObject?.get("relative_velocity")?.jsonObject?.get("kilometers_per_second")
-//                Log.i("-->> Nasa API", "jsonNEO $codename $relativeVelocity KM/s")
+//                Log.i("-->> Nasa API", "jsonNEO $codename $relativeVelocity KM/s relativeVelocity")
 
                 val distanceFromEarth = closeApproachData?.jsonObject?.get("miss_distance")?.jsonObject?.get("astronomical")
-//                Log.i("-->> Nasa API", "jsonNEO $codename $distanceFromEarth astronomical")
+//                Log.i("-->> Nasa API", "jsonNEO $codename $distanceFromEarth distanceFromEarth")
 
                 val isPotentiallyHazardous = asteroidJson?.jsonObject?.get("is_potentially_hazardous_asteroid")
 //                Log.i("-->> Nasa API", "jsonNEO $codename $isPotentiallyHazardous hazard")
@@ -54,15 +59,38 @@ fun parseAsteroidsJsonResult(jsonResult: JsonObject): ArrayList<Asteroid> {
                     ?.jsonObject?.get("kilometers")?.jsonObject?.get("estimated_diameter_max")
 //                Log.i("-->> Nasa API", "jsonNEO $codename $estimatedDiameter estimatedDiameter")
 
+                // sample for debugging
+//                val asteroid = Asteroid(
+//                    1L,
+//                    "codename",
+//                    "formattedDate",
+//                    1.0,
+//                    10.0,
+//                    10.0,
+//                    1000.0,
+//                    false)
+
+                // sample with formatted ID
+//                val asteroid = Asteroid(
+//                    cleanID,
+//                    "codename",
+//                    "formattedDate",
+//                    1.0,
+//                    10.0,
+//                    10.0,
+//                    1000.0,
+//                    false)
+
+
                 val asteroid = Asteroid(
-                    id.toLong(),
-                    codename,
-                    formattedDate,
-                    absoluteMagnitude.toString().toDouble(),
-                    estimatedDiameter.toString().toDouble(),
-                    relativeVelocity.toString().toDouble(),
-                    distanceFromEarth.toString().toDouble(),
-                    isPotentiallyHazardous.toString().toBoolean())
+                    cleanID,
+                    codename.replace("\"", ""),
+                    formattedDate.replace("\"", ""),
+                    absoluteMagnitude.toString().replace("\"", "").toDouble(),
+                    estimatedDiameter.toString().replace("\"", "").toDouble(),
+                    relativeVelocity.toString().replace("\"", "").toDouble(),
+                    distanceFromEarth.toString().replace("\"", "").toDouble(),
+                    isPotentiallyHazardous.toString().replace("\"", "").toBoolean())
 
                 asteroidList.add(asteroid)
 

@@ -37,24 +37,6 @@ class MainViewModel : ViewModel() {
     val asteroidLiveData : LiveData<ArrayList<Asteroid>>
         get() = _asteroidItemsLiveData
 
-    val sampleData : LiveData<ArrayList<Asteroid>>
-        get() {
-            val asteroidList = ArrayList<Asteroid>()
-            val asteroid = Asteroid(
-                1L,
-                "codename",
-                "formattedDate",
-                1.0,
-                10.0,
-                10.0,
-                1000.0,
-                false)
-            asteroidList.add(asteroid)
-            _asteroidItemsLiveData.value = asteroidList
-
-            return _asteroidItemsLiveData
-        }
-
     init {
         getAsteroidOfToday()
         getAsteroidsFromNasa()
