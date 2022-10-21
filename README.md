@@ -26,3 +26,5 @@ The latest version of this app was developed with help from:
 * Official Android documentation
 * hints provided by the IDE
 * reviewing the rubric
+* Kotlin Docs [serialization](https://kotlinlang.org/docs/serialization.html#formats)
+* Online tutorial [serialization](https://tonisives.com/blog/2021/01/05/create-json-manually-with-kotlinx-serialization/)
