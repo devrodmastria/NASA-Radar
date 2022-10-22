@@ -1,20 +1,17 @@
 package com.udacity.asteroidradar.main
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.ImageView
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 import com.udacity.asteroidradar.R
-import com.udacity.asteroidradar.databinding.FragmentDetailBinding
 import com.udacity.asteroidradar.databinding.FragmentMainBinding
 
 class MainFragment : Fragment() {
@@ -58,6 +55,15 @@ class MainFragment : Fragment() {
 
         binding.asteroidRecycler.adapter = AsteroidListAdapter(AsteroidListAdapter.OnClickListener {
             viewModel.displayAsteroidInfo(it)
+        })
+
+        viewModel.navigateToSelectedAsteroid.observe(viewLifecycleOwner, Observer {
+
+            // check if the asteroid data was not created by me (student)
+            if ( it.id != 1L ) {
+                this.findNavController().navigate(MainFragmentDirections.actionShowDetail(it))
+                viewModel.displayAsteroidInfoComplete()
+            }
         })
 
         return binding.root

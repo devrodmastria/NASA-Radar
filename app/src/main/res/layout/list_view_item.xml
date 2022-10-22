@@ -2,19 +2,60 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+
     <data>
         <variable
             name="asteroid"
             type="com.udacity.asteroidradar.Asteroid" />
     </data>
-    <TextView
-        android:id="@+id/asteroid_name"
+
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:padding="4dp"
-        android:textColor="@android:color/white"
-        tools:text="Asteroid Name"/>
+        android:background="@android:color/holo_orange_light"
+        android:gravity="end"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:background="@android:color/holo_green_light"
+            android:orientation="vertical"
+            android:layout_marginStart="40dp">
+
+            <TextView
+                android:id="@+id/asteroid_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                tools:text="Asteroid Name" />
+
+            <TextView
+                android:id="@+id/asteroid_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                tools:text="2022-10-21" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <ImageView
+            android:id="@+id/hazardImageView"
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:layout_gravity="center"
+            android:layout_marginEnd="16dp"
+            android:contentDescription="@string/hazard_status_icon"
+            app:statusIcon="@{asteroid.potentiallyHazardous}"
+            tools:src="@drawable/ic_status_normal" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 </layout>

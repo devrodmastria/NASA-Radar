@@ -88,6 +88,22 @@ class MainViewModel : ViewModel() {
 
     fun displayAsteroidInfo(asteroid: Asteroid) {
         _navigateToSelectedAsteroid.value = asteroid
+
+    }
+
+    fun displayAsteroidInfoComplete() {
+
+        val asteroidNull = Asteroid(
+            1L,
+            "codename",
+            "formattedDate",
+            1.0,
+            10.0,
+            10.0,
+            1000.0,
+            false)
+
+        _navigateToSelectedAsteroid.value = asteroidNull
     }
 
 }

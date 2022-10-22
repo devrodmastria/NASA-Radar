@@ -15,7 +15,7 @@ class DetailFragment : Fragment() {
     private lateinit var binding: FragmentDetailBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+                              savedInstanceState: Bundle?): View {
         binding = FragmentDetailBinding.inflate(inflater)
         binding.lifecycleOwner = this
 
