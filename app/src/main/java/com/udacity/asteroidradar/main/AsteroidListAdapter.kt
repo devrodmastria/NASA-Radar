@@ -40,6 +40,7 @@ class AsteroidListAdapter ( val onClickListener: OnClickListener ) :
         // this breaks the RecyclerView constraint layout during runtime
         val oldBinding = ListViewItemBinding.inflate(LayoutInflater.from(parent.context))
 
+        // updated binding supports Constraint layout
         val binding = ListViewItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 
         return AsteroidViewHolder(binding)

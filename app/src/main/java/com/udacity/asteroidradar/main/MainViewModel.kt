@@ -12,14 +12,18 @@ import com.udacity.asteroidradar.OfflineConstant
 import com.udacity.asteroidradar.api.NasaApi
 import com.udacity.asteroidradar.api.getNextSevenDaysFormattedDates
 import com.udacity.asteroidradar.api.parseAsteroidsJsonResult
+import com.udacity.asteroidradar.database.NearEarthObject
+import com.udacity.asteroidradar.database.NeoDatabaseDao
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 
 enum class NasaApiStatus { LOADING, ERROR, DONE }
 
-class MainViewModel : ViewModel() {
+class MainViewModel(val database: NeoDatabaseDao) : ViewModel() {
 
     private val _status = MutableLiveData<NasaApiStatus>()
     val apiStatus : LiveData<NasaApiStatus>
@@ -33,16 +37,81 @@ class MainViewModel : ViewModel() {
     val navigateToSelectedAsteroid: LiveData<Asteroid>
         get() = _navigateToSelectedAsteroid
 
-    private val _asteroidItemsLiveData = MutableLiveData<ArrayList<Asteroid>>()
-    val asteroidLiveData : LiveData<ArrayList<Asteroid>>
-        get() = _asteroidItemsLiveData
+    private val _asteroidListLiveData = MutableLiveData<List<Asteroid>>()
+    val asteroidLiveData : LiveData<List<Asteroid>>
+        get() = _asteroidListLiveData
 
     init {
-        getAsteroidOfToday()
-        getAsteroidsFromNasa()
+
+        downloadAsteroidOfToday()
+
+        // basic architecture - goal: display asteroids regardless of internet connection
+        // check if database contains asteroid list for today
+        getAsteroidsFromRoom()
+
+        // ELSE
+        // request download and listen for completion
+        // repeat steps above for Room
+
+
+
     }
 
-    private fun getAsteroidOfToday(){
+    private fun getAsteroidsFromRoom() {
+
+        val today = "2022-10-24"
+
+        viewModelScope.launch {
+
+            _status.value = NasaApiStatus.LOADING
+
+            try {
+
+                if (database.get(today) != null){
+
+                    val asteroidCount = database.get(today)!!.size
+                    Log.i("-->> Nasa API", "database is ready for today with count $asteroidCount")
+
+                    val neoList = database.get(today)
+
+                    // display asteroids without calling the web API
+                    val asteroidList = ArrayList<Asteroid>()
+                    if (neoList != null) {
+                        for (item in neoList){
+                            val asteroidObject = Asteroid(
+                                item.neoID,
+                                item.codeName,
+                                item.closeApproachDate,
+                                item.absoluteMagnitude,
+                                item.estimatedDiameter,
+                                item.relativeVelocity,
+                                item.distanceFromEarth,
+                                item.isPotentiallyHazardous
+                            )
+                            asteroidList.add(asteroidObject)
+                        }
+                        Log.i("-->> Nasa API", "database neo object type conversion OK")
+                    }
+
+                    _asteroidListLiveData.value = asteroidList
+                    _status.value = NasaApiStatus.DONE
+
+                } else {
+                    Log.i("-->> Nasa API", "NULL database")
+
+                    getAsteroidsFromNasa()
+                }
+
+
+            } catch (e: java.lang.Exception) {
+                Log.i("-->> Nasa API", "error for getAsteroidsFromNasa " + e.localizedMessage)
+            }
+        }
+
+
+    }
+
+    private fun downloadAsteroidOfToday(){
         viewModelScope.launch {
             try {
                 _imageToday.value = NasaApi.retrofitServiceForTodaysImage.getImageOfToday()
@@ -70,13 +139,30 @@ class MainViewModel : ViewModel() {
 //                val testItem = nasaResponseObject.jsonObject.get("near_earth_objects") // THIS WORKS!
 //                Log.i("-->> Nasa API", "getAsteroidsFromNasa " + testItem) // THIS WORKS!
 
-                val asteroidList : ArrayList<Asteroid> = parseAsteroidsJsonResult(nasaResponseObject)
+                val asteroidList : List<Asteroid> = parseAsteroidsJsonResult(nasaResponseObject)
 
-                Log.i("-->> Nasa API", "asteroidList " + asteroidList.size)
+                Log.i("-->> Nasa API", "asteroid list size " + asteroidList.size)
 
-                _asteroidItemsLiveData.value = asteroidList
-
+                // display asteroids as soon as possible
+                _asteroidListLiveData.value = asteroidList
                 _status.value = NasaApiStatus.DONE
+
+                // save asteroids right after displaying it to users
+                for (item in asteroidList){
+
+                    val neoItem = NearEarthObject(
+                        item.id,
+                        item.codename,
+                        item.closeApproachDate,
+                        item.absoluteMagnitude,
+                        item.estimatedDiameter,
+                        item.relativeVelocity,
+                        item.distanceFromEarth,
+                        item.isPotentiallyHazardous,
+                    )
+
+                    saveNewAsteroid(neoItem)
+                }
 
             } catch (e: java.lang.Exception) {
                 _status.value = NasaApiStatus.ERROR
@@ -104,6 +190,18 @@ class MainViewModel : ViewModel() {
             false)
 
         _navigateToSelectedAsteroid.value = asteroidNull
+    }
+
+    private suspend fun insertOneAsteroid(nearEarthObject: NearEarthObject) {
+        withContext(Dispatchers.IO) {
+            database.insertOneAsteroid(nearEarthObject)
+        }
+    }
+
+    private fun saveNewAsteroid(nearEarthObject: NearEarthObject) {
+        viewModelScope.launch {
+            insertOneAsteroid(nearEarthObject)
+        }
     }
 
 }

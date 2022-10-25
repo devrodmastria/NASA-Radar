@@ -12,12 +12,18 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.udacity.asteroidradar.R
+import com.udacity.asteroidradar.database.NeoDatabase
 import com.udacity.asteroidradar.databinding.FragmentMainBinding
 
 class MainFragment : Fragment() {
 
     private val viewModel: MainViewModel by lazy {
-        ViewModelProvider(this).get(MainViewModel::class.java)
+
+        val application = requireNotNull(this.activity).application
+        val dataSource = NeoDatabase.getInstance(application).neoDatabaseDao
+        val viewModelFactory = MainViewModelFactory(dataSource)
+
+        ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -49,8 +55,11 @@ class MainFragment : Fragment() {
 //            Log.i("-->> Nasa API", "new image " + newImage.title)
 //            Log.i("-->> Nasa API", "new image " + newImage.url)
 
+            imageView.contentDescription = newImage.title
+
             binding.textView.text = newImage.title
             Glide.with(imageView.context).load(newImage.url).into(imageView)
+
         })
 
         binding.asteroidRecycler.adapter = AsteroidListAdapter(AsteroidListAdapter.OnClickListener {

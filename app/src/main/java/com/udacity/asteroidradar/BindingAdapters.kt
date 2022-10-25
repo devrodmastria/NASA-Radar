@@ -38,7 +38,7 @@ fun bindAsteroidStatusImage(imageView: ImageView, isHazardous: Boolean) {
 }
 
 @BindingAdapter("asteroidListData")
-fun bindRecyclerView(recyclerView: RecyclerView, data: ArrayList<Asteroid>?) {
+fun bindRecyclerView(recyclerView: RecyclerView, data: List<Asteroid>?) {
     val adapter = recyclerView.adapter as AsteroidListAdapter
     adapter.submitList(data)
 }
@@ -50,6 +50,11 @@ fun bindDetailsStatusImage(imageView: ImageView, isHazardous: Boolean) {
     } else {
         imageView.setImageResource(R.drawable.asteroid_safe)
     }
+}
+
+@BindingAdapter("imageContentDescription")
+fun bindImageViewToContentInfo(imageView: ImageView, info: String) {
+    imageView.contentDescription = info
 }
 
 @BindingAdapter("astronomicalUnitText")

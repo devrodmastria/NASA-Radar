@@ -36,7 +36,7 @@ fun parseAsteroidsJsonResult(jsonResult: JsonObject): ArrayList<Asteroid> {
                 val rawID =  asteroidJson?.jsonObject?.get("id").toString()
                 val cleanID = rawID.replace("\"", "").toLong()
 
-                Log.i("-->> Nasa API", "jsonNEO ID $cleanID ")
+//                Log.i("-->> Nasa API", "jsonNEO ID $cleanID ")
 
                 val codename = asteroidJson?.jsonObject?.get("name").toString()
 //                Log.i("-->> Nasa API", "jsonNEO $formattedDate with item $asteroidItem known as $codename")
